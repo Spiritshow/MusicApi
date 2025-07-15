@@ -46,7 +46,7 @@ signUp.post('/SignUp', async (req, res) => {
 
     res.status(201).json({ message: "Регистрация прошла успешно" });
   } catch (error) {
-    console.error("Ошибка при регистрации:", error);
+    console.log("Ошибка при регистрации:", error);
     res.status(500).json({ message: "Ошибка сервера при регистрации" });
   }
 
