@@ -15,7 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const InfoProduct_1 = __importDefault(require("./helpers/InfoProduct"));
 const InfoSpec_1 = __importDefault(require("./helpers/InfoSpec"));
-const TranslatorSpec_1 = __importDefault(require("./helpers/TranslatorSpec"));
+const getNameSpec_1 = __importDefault(require("./helpers/getNameSpec"));
+const getValueSpec_1 = __importDefault(require("./helpers/getValueSpec"));
 const productInfo = express_1.default.Router();
 productInfo.get("/product/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
@@ -24,8 +25,18 @@ productInfo.get("/product/:id", (req, res) => __awaiter(void 0, void 0, void 0, 
         if (!product)
             throw new Error('not found');
         const rawSpec = yield (0, InfoSpec_1.default)(product.subcategorytable, id);
-        const spec = yield (0, TranslatorSpec_1.default)(rawSpec);
-        res.json(Object.assign(Object.assign({}, product), { spec: spec }));
+        const rawSpecifications = yield Object.entries(rawSpec)
+            .filter(([key]) => key.startsWith("spec_"))
+            .map(([key, value]) => ({
+            name: key,
+            value: value
+        }));
+        const specifications = yield Promise.all(rawSpecifications.map((raw) => __awaiter(void 0, void 0, void 0, function* () {
+            const name = yield (0, getNameSpec_1.default)(raw.name);
+            const value = yield (0, getValueSpec_1.default)(raw.name, raw.value);
+            return ({ name, value });
+        })));
+        res.json(Object.assign(Object.assign({}, product), { specifications: specifications }));
     }
     catch (error) {
         console.log("Ошибка при выдаче информации по продукту:", error);

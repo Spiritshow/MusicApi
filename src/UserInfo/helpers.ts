@@ -4,8 +4,9 @@ import JWT_SECRET from "../ConfConst/SecretKey";
 import { IJWTUser } from "../Types/User";
 
 
-export interface IReqAuth extends Request {
-    user?: IJWTUser
+export interface IReqAuth<T = any> extends Request {
+    user?: IJWTUser;
+    body: T;
 }
 
 export function authenticateToken(req: IReqAuth, res: Response, next: NextFunction) {
