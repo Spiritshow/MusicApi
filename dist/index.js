@@ -31,6 +31,7 @@ const SumPricePosition_1 = __importDefault(require("./Basket/SumPricePosition"))
 const DeletePosition_1 = __importDefault(require("./Basket/DeletePosition"));
 const CleaningBasket_1 = __importDefault(require("./Basket/CleaningBasket"));
 const getPositionsInBasket_1 = __importDefault(require("./Basket/getPositionsInBasket"));
+const Payment_1 = __importDefault(require("./Payment/Payment"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
@@ -63,6 +64,7 @@ app.use(SumPricePosition_1.default);
 app.use(DeletePosition_1.default);
 app.use(CleaningBasket_1.default);
 app.use(getPositionsInBasket_1.default);
+app.use(Payment_1.default);
 const port = 3000;
 app.listen(port, (err) => {
     if (err) {

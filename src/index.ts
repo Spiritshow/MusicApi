@@ -26,6 +26,7 @@ import sumpriceposition from "./Basket/SumPricePosition";
 import deleteposition from "./Basket/DeletePosition";
 import cleaningbasket from "./Basket/CleaningBasket";
 import getpositionsinbasket from "./Basket/getPositionsInBasket";
+import payment from "./Payment/Payment";
 
 const app = express();
 
@@ -60,6 +61,7 @@ app.use(sumpriceposition);
 app.use(deleteposition);
 app.use(cleaningbasket);
 app.use(getpositionsinbasket);
+app.use(payment);
 
 const port = 3000;
 app.listen(port, (err?: unknown)=> {
