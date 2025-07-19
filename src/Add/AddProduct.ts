@@ -14,6 +14,7 @@ import addinfoproduct from "./helpers/AddInfoProduct";
 import addimgproduct from "./helpers/AddImgProduct";
 import addspec from "./helpers/AddSpec";
 import updatespec from "./helpers/UpdateSpec";
+import ParsedValue from "./helpers/ParsedSpecValue";
 const addproductrouter = express.Router();
 
 const upload = multer({storage});
@@ -47,7 +48,7 @@ interface ISpecifications{
 
 addproductrouter.post("/addproduct", upload.array("images", 10), async (req,res) => {
     const { name, price, description, count, category, newcategory, subcategory, newsubcategory }: IReqAddPrudact = req.body;
-    const req_specs: Record<string, number | string> = JSON.parse(req.body.specs || "{}");
+    const req_specs: Record<string, string> = JSON.parse(req.body.specs || "{}");
     const newSpecs: IReqNewSpec[] = JSON.parse(req.body.newSpecs || "[]");
     const images = req.files as Express.Multer.File[];
 
@@ -56,24 +57,10 @@ addproductrouter.post("/addproduct", upload.array("images", 10), async (req,res)
     const nameImages: string[] = images.map(img => img.filename)
     const specs: IReqSpec[] = Object.entries(req_specs).map(([key, val]) => ({
         name: key,
-        value: val
+        value: ParsedValue(val)
     }));
 
     const specifications: ISpecifications[] = [];
-    
-    console.log("Новый продукт:", {
-        name,
-        price,
-        description,
-        count,
-        category,
-        newcategory,
-        subcategory,
-        newsubcategory,
-        specs,
-        newSpecs,
-        images: images.map(img => img.filename),
-    });
 
 
 
@@ -224,9 +211,12 @@ addproductrouter.post("/addproduct", upload.array("images", 10), async (req,res)
             }
 
             for( const spec of specs){
-                if (isNumberObject(spec.value)){
+                console.log("spec:" + spec.value)
+                if (typeof spec.value === "number"){
+                    console.log("Number:"+spec.value);
                     specifications.push({name: spec.name, value: spec.value});
                 } else {
+                    console.log("String:"+spec.value);
                     const id_valuespec = await addvaluespec(spec.name, spec.value);
                     if (typeof id_valuespec === "undefined") {
                         res.status(500).json({ message: "Ошибка сервера при добавлении нового значения характеристики" });
